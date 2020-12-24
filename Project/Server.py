@@ -5,6 +5,7 @@ import time
 
 server_port = 2050  # initiate port no above 1024
 broadcast_port = 13117  # this should be the port in the end when we test it
+teams = []  # do not forget to clear it after every match
 
 
 def server_broadcast():
@@ -37,6 +38,8 @@ def server_accepting():
 
     while True:
         conn, address = server_socket.accept()  # accept new connection
+        teams.append(conn.recv(1024).decode())
+        print(teams)
         print("Connection from: " + str(address))
         client_thread = threading.Thread(target=start_game, args=(conn,))
         client_thread.start()

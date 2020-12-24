@@ -25,13 +25,18 @@ def client_listen():
         host_name = socket.gethostbyname(socket.gethostname())  # The dev network (eth1, 172.1.0/24) is used for development, and the test network (eth2, 172.99.0/24) will be used to test your work
         print("Received offer from " + str(host_name) + ", attempting to connect...")
         invitation_port = unpacked_data[2]    # socket server port number
-        tcp_socket.connect((host_name, invitation_port))  # connect to the server
-        with Listener(on_release=on_release) as listener:
-            client_game()
+        try:
+            tcp_socket.connect((host_name, invitation_port))  # connect to the server
+            tcp_socket.send((team_name+"\n").encode())
+            with Listener(on_release=on_release) as listener:
+                client_game()
+        except:
+            print("could not connect using the invitation")
 
 
 def client_game():
 
+    #   the server should send a tcp packet to stop the game at the end
     while True:
         data = tcp_socket.recv(1024).decode()  # receive response
         print('Counter : ' + data)  # show in terminal
