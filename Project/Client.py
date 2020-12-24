@@ -1,24 +1,11 @@
 import socket
-from pynput.keyboard import Key,Listener
+from pynput.keyboard import Key, Listener
 import threading
 import UDPMessage
 import struct
 
 
 tcp_socket = socket.socket()
-
-
-def client_program():
-
-    while True:
-        data = tcp_socket.recv(1024).decode()  # receive response
-        print('Counter : ' + data)  # show in terminal
-
-    game_socket.close()  # close the connection
-
-
-def on_release(key):
-    tcp_socket.send(str(key).encode())    # send message
 
 
 def client_listen():
@@ -45,7 +32,20 @@ def client_listen():
     #    game_thread.start()
 
         with Listener(on_release=on_release) as listener:
-            client_program()
+            client_game()
+
+
+def client_game():
+
+    while True:
+        data = tcp_socket.recv(1024).decode()  # receive response
+        print('Counter : ' + data)  # show in terminal
+
+    game_socket.close()  # close the connection
+
+
+def on_release(key):
+    tcp_socket.send(str(key).encode())    # send message
 
 
 if __name__ == '__main__':

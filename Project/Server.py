@@ -4,6 +4,25 @@ import UDPMessage
 import time
 
 
+def server_broadcast():
+
+    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    # Enable broadcasting mode
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    # Set a timeout so the socket does not block
+    # indefinitely when trying to receive data.
+    server.settimeout(0.2)
+    message = UDPMessage.send_offer(5000)
+
+    while True:
+        port_number = 13117  # this should be the port in the end when we test it
+        port_number = 5000
+        server.sendto(message, ('<broadcast>', port_number))
+#        print("announcement sent!")
+        time.sleep(1)
+
+
 def server_accepting():
     # get the hostname
     host = socket.gethostname()
@@ -37,28 +56,6 @@ def start_game(connection_socket):
         connection_socket.send(str(counter).encode())  # send data to the client
 
     connection_socket.close()  # close the connection
-
-
-def server_broadcast():
-    # start b
-
-    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # Enable broadcasting mode
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    # Set a timeout so the socket does not block
-    # indefinitely when trying to receive data.
-    server.settimeout(0.2)
-    message = UDPMessage.send_offer(5000)
-
-    while True:
-        port_number = 13117  # this should be the port in the end when we test it
-        port_number = 5000
-        server.sendto(message, ('<broadcast>', port_number))
-#        print("announcement sent!")
-        time.sleep(1)
-
-    # end b
 
 
 if __name__ == '__main__':
