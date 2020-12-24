@@ -9,7 +9,6 @@ client_socket = socket.socket()  # instantiate
 client_socket.connect((host, port))  # connect to the server
 
 
-
 def client_program():
 
     while True:
