@@ -6,31 +6,26 @@ import struct
 
 
 tcp_socket = socket.socket()
+broadcast_port = 13117
+team_name = "team1"
 
 
 def client_listen():
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
 
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  # UDP
     client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     # Enable broadcasting mode
     client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-
-    host_name = socket.gethostname()   #The dev network (eth1, 172.1.0/24) is used for development, and the test network (eth2, 172.99.0/24) will be used to test your work
-
-    client.bind(("", 5000))
+    client.bind(("", broadcast_port))
     while True:
         data, addr = client.recvfrom(1024)
-        print("received message: %s" % data)
-        print(hex(struct.unpack('QQQ', data)[0]))
-#        print([UDPMessage.access_bit(data, i) for i in range(len(data) * 8)])
-        invitation_port = struct.unpack('QQQ', data)[2]
-    #    tcp_socket = socket.socket()  # instantiate
-        tcp_socket.connect((host, port))  # connect to the server
-    #    game_thread = threading.Thread(target=client_program())
-    #    game_thread.start()
-
+        unpacked_data = struct.unpack('QQQ', data)
+    #   print(hex(unpacked_data[0]))
+        host_name = client.getsockname()[0]  # should run this when it is time to test on the lab machines
+        host_name = socket.gethostbyname(socket.gethostname())  # The dev network (eth1, 172.1.0/24) is used for development, and the test network (eth2, 172.99.0/24) will be used to test your work
+        print("Received offer from " + str(host_name) + ", attempting to connect...")
+        invitation_port = unpacked_data[2]    # socket server port number
+        tcp_socket.connect((host_name, invitation_port))  # connect to the server
         with Listener(on_release=on_release) as listener:
             client_game()
 

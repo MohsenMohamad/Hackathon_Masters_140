@@ -3,6 +3,9 @@ import threading
 import UDPMessage
 import time
 
+server_port = 2050  # initiate port no above 1024
+broadcast_port = 13117  # this should be the port in the end when we test it
+
 
 def server_broadcast():
 
@@ -13,24 +16,21 @@ def server_broadcast():
     # Set a timeout so the socket does not block
     # indefinitely when trying to receive data.
     server.settimeout(0.2)
-    message = UDPMessage.send_offer(5000)
+    message = UDPMessage.send_offer(server_port)
 
     while True:
-        port_number = 13117  # this should be the port in the end when we test it
-        port_number = 5000
-        server.sendto(message, ('<broadcast>', port_number))
-#        print("announcement sent!")
+        server.sendto(message, ('<broadcast>', broadcast_port))
+#       print("announcement sent!")
         time.sleep(1)
 
 
 def server_accepting():
     # get the hostname
     host = socket.gethostname()
-    port = 5000  # initiate port no above 1024
 
     server_socket = socket.socket()  # get instance
     # look closely. The bind() function takes tuple as argument
-    server_socket.bind((host, port))  # bind host address and port together
+    server_socket.bind((host, server_port))  # bind host address and port together
 
     # configure how many client the server can listen simultaneously
     server_socket.listen(4)
@@ -59,7 +59,6 @@ def start_game(connection_socket):
 
 
 if __name__ == '__main__':
-    UDPMessage.send_offer(50)
     print("Server started,listening on IP address : " + socket.gethostbyname(socket.gethostname()))
     broadcast_thread = threading.Thread(target=server_broadcast)
     broadcast_thread.start()
