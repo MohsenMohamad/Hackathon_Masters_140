@@ -3,26 +3,30 @@ import threading
 import UDPMessage
 import time
 
+
 server_port = 2050  # initiate port no above 1024
 broadcast_port = 13117  # this should be the port in the end when we test it
 teams = []  # do not forget to clear it after every match
+game_result = "\ngame result"
 
 
 def server_broadcast():
 
-    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # Enable broadcasting mode
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    # Set a timeout so the socket does not block
-    # indefinitely when trying to receive data.
-    server.settimeout(0.2)
-    message = UDPMessage.send_offer(server_port)
-
     while True:
-        server.sendto(message, ('<broadcast>', broadcast_port))
-#       print("announcement sent!")
-        time.sleep(1)
+        server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Enable broadcasting mode
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        # Set a timeout so the socket does not block
+        # indefinitely when trying to receive data.
+        server.settimeout(0.2)
+        message = UDPMessage.send_offer(server_port)
+
+        while len(teams) < 4:
+            server.sendto(message, ('<broadcast>', broadcast_port))
+            time.sleep(1)
+
+        teams.clear()
 
 
 def server_accepting():
@@ -47,17 +51,22 @@ def server_accepting():
 
 def start_game(connection_socket):
     counter = 0
-    while True:
-        print(counter)
-        # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = connection_socket.recv(1024).decode()
-        if not data:
-            # if data is not received break
-            break
-        print(data)
-        counter = counter + 1
-        connection_socket.send(str(counter).encode())  # send data to the client
-
+    end_game = time.time()+10
+    connection_socket.setblocking(False)
+    while time.time() < end_game:
+        try:
+            # receive data stream. it won't accept data packet greater than 1024 bytes
+            data = connection_socket.recv(1024).decode()
+            if not data:
+                # if data is not received break
+                break
+            print(data)
+            counter = counter + 1
+            print(counter)
+        #    connection_socket.send(str(counter).encode())  # send data to the client
+        except:
+            print(end='\r')
+    connection_socket.send(game_result.encode())
     connection_socket.close()  # close the connection
 
 
