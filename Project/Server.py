@@ -1,9 +1,10 @@
 import socket
 import threading
+import UDPMessage
+import time
 
 
-def server_program():
-
+def server_accepting():
     # get the hostname
     host = socket.gethostname()
     port = 5000  # initiate port no above 1024
@@ -13,7 +14,8 @@ def server_program():
     server_socket.bind((host, port))  # bind host address and port together
 
     # configure how many client the server can listen simultaneously
-    server_socket.listen(8)
+    server_socket.listen(4)
+
     while True:
         conn, address = server_socket.accept()  # accept new connection
         print("Connection from: " + str(address))
@@ -37,6 +39,31 @@ def start_game(connection_socket):
     connection_socket.close()  # close the connection
 
 
+def server_broadcast():
+    # start b
+
+    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    # Enable broadcasting mode
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    # Set a timeout so the socket does not block
+    # indefinitely when trying to receive data.
+    server.settimeout(0.2)
+    message = UDPMessage.send_offer(5000)
+
+    while True:
+        port_number = 13117  # this should be the port in the end when we test it
+        port_number = 5000
+        server.sendto(message, ('<broadcast>', port_number))
+#        print("announcement sent!")
+        time.sleep(1)
+
+    # end b
+
+
 if __name__ == '__main__':
-    print("Server started,listening on IP address : "+socket.gethostbyname(socket.gethostname()))
-    server_program()
+    UDPMessage.send_offer(50)
+    print("Server started,listening on IP address : " + socket.gethostbyname(socket.gethostname()))
+    broadcast_thread = threading.Thread(target=server_broadcast)
+    broadcast_thread.start()
+    server_accepting()
