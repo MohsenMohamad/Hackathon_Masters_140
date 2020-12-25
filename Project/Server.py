@@ -52,7 +52,7 @@ def server_broadcast():
             except:
                 print(end='\r')
             time.sleep(1)
-
+        setup_teams() # assign each team to randonly selected group
         for t in players_threads:
             t.start()
         time.sleep(10)
@@ -82,6 +82,15 @@ def start_game(connection_socket):
     connection_socket.close()  # close the connection
     players_threads.remove(threading.current_thread())
 
+def setup_teams()
+    while not teams:
+        team = random.choice(teams)
+        teams.remove(team)
+        my_choice = random.choice([1, 2])
+        if my_choice == 1:
+            group1.append(team)
+        else:
+            group2.append(team)
 
 if __name__ == '__main__':
     print("Server started,listening on IP address : " + socket.gethostbyname(socket.gethostname()))
