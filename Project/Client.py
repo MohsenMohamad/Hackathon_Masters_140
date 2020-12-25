@@ -45,6 +45,7 @@ def client_game():
         print(data)  # show in terminal
 
     tcp_socket.close()  # close the connection
+    print("Server disconnected, listening for offer requests...")
 
 
 def on_release(key):

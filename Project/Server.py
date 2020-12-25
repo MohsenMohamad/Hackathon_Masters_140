@@ -9,6 +9,7 @@ broadcast_port = 13117  # this should be the port in the end when we test it
 teams = []  # do not forget to clear it after every match
 game_result = "\ngame result"
 game_message = "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n"
+players_threads = []
 
 
 def server_broadcast():
@@ -47,35 +48,16 @@ def server_broadcast():
                 teams.append(conn.recv(1024).decode())  # add the team's name
                 print("Connection from: " + str(address))
                 client_thread = threading.Thread(target=start_game, args=(conn,))
-                client_thread.start()
+                players_threads.append(client_thread)
             except:
                 print(end='\r')
             time.sleep(1)
 
+        for t in players_threads:
+            t.start()
         time.sleep(10)
+        print("Game over, sending out offer requests...")
         teams.clear()
-
-
-def server_accepting():
-    # get the hostname
-    host = socket.gethostname()
-
-    server_socket = socket.socket()  # get instance
-    # look closely. The bind() function takes tuple as argument
-    server_socket.bind((host, server_port))  # bind host address and port together
-
-    # configure how many client the server can listen simultaneously
-    server_socket.listen()
-
-    while True:
-        conn, address = server_socket.accept()  # accept new connection
-        print(server_socket.getsockname())
-        print(conn.getsockname())
-        teams.append(conn.recv(1024).decode())  # add the team's name
-        print(teams)
-        print("Connection from: " + str(address))
-        client_thread = threading.Thread(target=start_game, args=(conn,))
-        client_thread.start()
 
 
 def start_game(connection_socket):
@@ -98,6 +80,7 @@ def start_game(connection_socket):
             print(end='\r')
     connection_socket.send(game_result.encode())
     connection_socket.close()  # close the connection
+    players_threads.remove(threading.current_thread())
 
 
 if __name__ == '__main__':
