@@ -55,7 +55,7 @@ def server_broadcast():
             except:
                 print(end='\r')
             time.sleep(1)
-        setup_teams() # assign each team to randonly selected group
+        setup_teams()  # assign each team to randomly selected group
         for t in players_threads:
             t.start()
         time.sleep(10)
@@ -65,7 +65,11 @@ def server_broadcast():
 
 def start_game(connection_socket):
     connection_socket.setblocking(False)
-    connection_socket.send(game_message.encode())
+    msg = game_message + concatenate_list_data(group1)
+    msg += "Group 2:\n==\n"
+    msg += concatenate_list_data(group2)
+    msg += "Start pressing keys on your keyboard as fast as you can!!\n"
+    connection_socket.send(msg.encode())
     counter = 0
     end_game = time.time()+10
     while time.time() < end_game:
@@ -87,7 +91,7 @@ def start_game(connection_socket):
 
 
 def setup_teams():
-    while not teams:
+    while len(teams) != 0:
         team = random.choice(teams)
         teams.remove(team)
         my_choice = random.choice([1, 2])
@@ -95,6 +99,14 @@ def setup_teams():
             group1.append(team)
         else:
             group2.append(team)
+
+
+def concatenate_list_data(lst):
+    result = ""
+    for element in lst:
+        result += element
+        result += "\n"
+    return result
 
 
 if __name__ == '__main__':

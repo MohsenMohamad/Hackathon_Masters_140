@@ -43,7 +43,6 @@ def client_game():
             break
     #    print('Counter : ' + data)  # show in terminal
         print(data)  # show in terminal
-
     tcp_socket.close()  # close the connection
     print("Server disconnected, listening for offer requests...")
 
