@@ -8,7 +8,7 @@ server_port = 2050  # initiate port no above 1024
 broadcast_port = 13117  # this should be the port in the end when we test it
 teams = []  # do not forget to clear it after every match
 game_result = "\ngame result"
-game_message = "\nwelcome"
+game_message = "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n"
 
 
 def server_broadcast():

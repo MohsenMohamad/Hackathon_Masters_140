@@ -7,7 +7,7 @@ import struct
 
 tcp_socket = socket.socket()
 broadcast_port = 13117
-team_name = "team1"
+team_name = "Instinct"
 
 
 def client_listen():
