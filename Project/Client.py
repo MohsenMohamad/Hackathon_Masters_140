@@ -12,7 +12,7 @@ team_name = "Instinct"
 
 def client_listen():
 
-    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  # UDP
+    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  # UDPygyggygyygygygygygygygygygyg
     client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     # Enable broadcasting mode
     client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -22,16 +22,20 @@ def client_listen():
         tcp_socket = socket.socket()
         data, addr = client.recvfrom(1024)
         unpacked_data = struct.unpack('QQQ', data)
-    #   print(hex(unpacked_data[0]))
-        host_name = client.getsockname()[0]  # should run this when it is time to test on the lab machines
-        host_name = socket.gethostbyname(socket.gethostname())  # The dev network (eth1, 172.1.0/24) is used for development, and the test network (eth2, 172.99.0/24) will be used to test your work
+#       print(hex(unpacked_data[0]))
+        host_name = addr[0]  # (eth1, 172.1.0/24) is for development , (eth2, 172.99.0/24) is to test your work
         print("Received offer from " + str(host_name) + ", attempting to connect...")
         invitation_port = unpacked_data[2]    # socket server port number
+        client_connect(host_name, invitation_port)
 
-        tcp_socket.connect((host_name, invitation_port))  # connect to the server
-        tcp_socket.send((team_name+"\n").encode())
-        with Listener(on_release=on_release) as listener:
-            client_game()
+
+def client_connect(hostname, port):
+
+    print(port)
+    tcp_socket.connect((hostname, port))  # connect to the server
+    tcp_socket.send((team_name + "\n").encode())
+    with Listener(on_release=on_release) as listener:
+        client_game()
 
 
 def client_game():
