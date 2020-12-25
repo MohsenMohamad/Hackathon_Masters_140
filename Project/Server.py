@@ -8,7 +8,7 @@ server_port = 2050  # initiate port no above 1024
 broadcast_port = 13117  # this should be the port in the end when we test it
 teams = []  # do not forget to clear it after every match
 game_result = "\ngame result"
-synchro_object = threading.Condition()
+game_message = "\nwelcome"
 
 
 def server_broadcast():
@@ -51,8 +51,8 @@ def server_broadcast():
             except:
                 print(end='\r')
             time.sleep(1)
-        with synchro_object:
-            synchro_object.wait()
+
+        time.sleep(10)
         teams.clear()
 
 
@@ -79,9 +79,10 @@ def server_accepting():
 
 
 def start_game(connection_socket):
+    connection_socket.setblocking(False)
+    connection_socket.send(game_message.encode())
     counter = 0
     end_game = time.time()+10
-    connection_socket.setblocking(False)
     while time.time() < end_game:
         try:
             # receive data stream. it won't accept data packet greater than 1024 bytes
@@ -97,8 +98,6 @@ def start_game(connection_socket):
             print(end='\r')
     connection_socket.send(game_result.encode())
     connection_socket.close()  # close the connection
-    with synchro_object:
-        synchro_object.notifyAll()
 
 
 if __name__ == '__main__':
