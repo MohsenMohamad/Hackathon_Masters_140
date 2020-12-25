@@ -7,10 +7,12 @@ import random
 
 server_port = 2050  # initiate port no above 1024
 broadcast_port = 13117  # this should be the port in the end when we test it
-teams = []  # do not forget to clear it after every match
-group1 = []
-group2 = []
-game_result = "\ngame result"
+teams = {}  # do not forget to clear it after every match
+group1 = {}
+group2 = {}
+group1_result = 0
+group2_result = 0
+game_result = "\nGame over!\n"
 game_message = "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n"
 players_threads = []
 
@@ -48,9 +50,10 @@ def server_broadcast():
             server.sendto(message, ('<broadcast>', broadcast_port))
             try:
                 conn, address = server_socket.accept()  # accept new connection
-                teams.append(conn.recv(1024).decode())  # add the team's name
+                team_name = conn.recv(1024).decode()  # add the team's name
                 print("Connection from: " + str(address))
                 client_thread = threading.Thread(target=start_game, args=(conn,))
+                teams[team_name] = client_thread
                 players_threads.append(client_thread)
             except:
                 print(end='\r')
@@ -59,6 +62,7 @@ def server_broadcast():
         for t in players_threads:
             t.start()
         time.sleep(10)
+        print_result()
         print("Game over, sending out offer requests...")
         teams.clear()
 
@@ -70,7 +74,6 @@ def start_game(connection_socket):
     msg += concatenate_list_data(group2)
     msg += "Start pressing keys on your keyboard as fast as you can!!\n"
     connection_socket.send(msg.encode())
-    counter = 0
     end_game = time.time()+10
     while time.time() < end_game:
         try:
@@ -79,26 +82,33 @@ def start_game(connection_socket):
             if not data:
                 # if data is not received break
                 break
-            print(data)
-            counter = counter + 1
-            print(counter)
-        #    connection_socket.send(str(counter).encode())  # send data to the client
+            if threading.current_thread() in group1.values():
+                global group1_result
+                group1_result += 1
+            else:
+                global group2_result
+                group2_result += 1
         except:
             print(end='\r')
     connection_socket.send(game_result.encode())
     connection_socket.close()  # close the connection
     players_threads.remove(threading.current_thread())
+    group1.clear()
+    group2.clear()
 
 
 def setup_teams():
     while len(teams) != 0:
-        team = random.choice(teams)
-        teams.remove(team)
+        lst = []
+        for item in teams.keys():
+            lst.append(item)
+        team = random.choice(lst)
         my_choice = random.choice([1, 2])
         if my_choice == 1:
-            group1.append(team)
+            group1[team] = teams[team]
         else:
-            group2.append(team)
+            group2[team] = teams[team]
+        teams.pop(team)
 
 
 def concatenate_list_data(lst):
@@ -107,6 +117,14 @@ def concatenate_list_data(lst):
         result += element
         result += "\n"
     return result
+
+
+def print_result():
+    global group1_result
+    global group2_result
+    print(group1_result, group2_result)
+    group1_result = 0
+    group2_result = 0
 
 
 if __name__ == '__main__':
