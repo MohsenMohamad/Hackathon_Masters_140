@@ -2,11 +2,14 @@ import socket
 import threading
 import UDPMessage
 import time
+import random
 
 
 server_port = 2050  # initiate port no above 1024
 broadcast_port = 13117  # this should be the port in the end when we test it
 teams = []  # do not forget to clear it after every match
+group1 = []
+group2 = []
 game_result = "\ngame result"
 game_message = "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n"
 players_threads = []
@@ -82,7 +85,8 @@ def start_game(connection_socket):
     connection_socket.close()  # close the connection
     players_threads.remove(threading.current_thread())
 
-def setup_teams()
+
+def setup_teams():
     while not teams:
         team = random.choice(teams)
         teams.remove(team)
@@ -91,6 +95,7 @@ def setup_teams()
             group1.append(team)
         else:
             group2.append(team)
+
 
 if __name__ == '__main__':
     print("Server started,listening on IP address : " + socket.gethostbyname(socket.gethostname()))
