@@ -59,14 +59,13 @@ def server_broadcast():
 
         time.sleep(10)
         print_result()
-        print("Game over, sending out offer requests...")
         group1.clear()
         group2.clear()
 
 
 def start_game(connection_socket):
 
-    connection_socket.send(start_game_message().encode())
+    connection_socket.send(start_game_msg().encode())
     end_game = time.time()+10
     while time.time() < end_game:
         try:
@@ -97,7 +96,7 @@ def concatenate_list_data(lst):
     return result
 
 
-def start_game_message():
+def start_game_msg():
     game_message = "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n"
     msg = game_message + concatenate_list_data(group1)
     msg += "Group 2:\n==\n"
@@ -109,7 +108,17 @@ def start_game_message():
 def print_result():
     global group1_result
     global group2_result
-    print(group1_result, group2_result)
+    str1 = "Group 1 typed in " + str(group1_result) + " characters. "
+    str2 = "Group 2 typed in " + str(group2_result) + " characters."
+    print(game_result + str1 + str2)
+    if group1_result > group2_result:
+        winners = concatenate_list_data(group1) + "Game over, sending out offer requests..."
+        print("\033[1;3;32mGroup 1 wins!\033[0m\n\nCongratulations to the winners:\n==\n" + winners)
+    elif group2_result > group1_result:
+        winners = concatenate_list_data(group2) + "Game over, sending out offer requests..."
+        print("\033[1;3;32mGroup 2 wins!\033[0m\n\nCongratulations to the winners:\n==\n" + winners)
+    else:
+        print("\033[0;31mDraw!\033[0m\nNone of the groups won the game!\n" + "Game over, sending out offer requests...")
     group1_result = 0
     group2_result = 0
 
