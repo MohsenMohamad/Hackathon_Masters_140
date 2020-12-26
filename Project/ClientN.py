@@ -48,10 +48,11 @@ async def client_game():
     print("Server disconnected, listening for offer requests...")
 
 
-async def on_release(key):
+def on_release(key):
     writer.write(str(key).encode())    # send message
 
 
 if __name__ == '__main__':
+    print("Client started, listening for offer requests...")
     asyncio.run(client_listen())
     # asyncio.run(tcp_echo_client('Hello World!'))
