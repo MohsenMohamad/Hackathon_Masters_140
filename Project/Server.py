@@ -11,6 +11,7 @@ group1 = {}
 group2 = {}
 group1_result = 0
 group2_result = 0
+data_container = {}
 counter1_lock = threading.Lock()
 counter2_lock = threading.Lock()
 game_result = "\nGame over!\n"
@@ -56,15 +57,21 @@ def server_broadcast():
             t.start()
         for t in group2.values():
             t.start()
-
         time.sleep(10)
         print_result()
+        set_up_data(group1, group2)
         group1.clear()
         group2.clear()
 
 
-def start_game(connection_socket):
+def set_up_data(group1, group2):
+    lst1 = group1.keys()
+    data_container[lst1] = group1_result
+    lst2 = group2.keys()
+    data_container[lst2] = group2_result
 
+
+def start_game(connection_socket):
     connection_socket.send(start_game_msg().encode())
     end_game = time.time()+10
     while time.time() < end_game:
