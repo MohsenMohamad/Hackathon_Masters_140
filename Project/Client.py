@@ -31,7 +31,6 @@ def client_listen():
 
 def client_connect(hostname, port):
 
-    print(port)
     tcp_socket.connect((hostname, port))  # connect to the server
     tcp_socket.send((team_name + "\n").encode())
     with Listener(on_release=on_release) as listener:
