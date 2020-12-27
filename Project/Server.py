@@ -3,16 +3,13 @@ import threading
 import UDPMessage
 import time
 import random
+import Match
 
-group1 = {}
-group2 = {}
-group1_result = 0
-group2_result = 0
-counter1_lock = threading.Lock()
-counter2_lock = threading.Lock()
+match = Match.Match()
 
 
 def server_broadcast(server_port, broadcast_port):
+    global match
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)   # broadcast socket
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    # Enable broadcasting mode
     server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -26,6 +23,7 @@ def server_broadcast(server_port, broadcast_port):
     server_socket.listen()      # configure how many client the server can listen simultaneously
 
     while True:
+        match = Match.Match()
         stop_broadcast = time.time() + 10
         while time.time() < stop_broadcast:
             server.sendto(message, ('<broadcast>', broadcast_port))
@@ -33,32 +31,31 @@ def server_broadcast(server_port, broadcast_port):
                 conn, address = server_socket.accept()  # accept new connection
                 conn.setblocking(True)
                 team_name = conn.recv(1024).decode()  # add the team's name
+                client_thread = threading.Thread(target=start_game, args=(conn,))
                 print("Connection from: " + str(address))
                 if random.choice([1, 2]) == 1:
-                    client_thread = threading.Thread(target=start_game, args=(conn,))
-                    group1[team_name] = client_thread
+                    match.add_team_to_group1(team_name, client_thread)
                 else:
-                    client_thread = threading.Thread(target=start_game, args=(conn,))
-                    group2[team_name] = client_thread
+                    match.add_team_to_group2(team_name, client_thread)
 
             except:
                 print(end='\r')
             time.sleep(1)
-        for t in group1.values():
+        for t in match.group1.values():
             t.start()
-        for t in group2.values():
+        for t in match.group2.values():
             t.start()
         time.sleep(10)
-        print_result()
-        group1.clear()
-        group2.clear()
+        match.print_result()
+    #    group1.clear()
+    #    group2.clear()
 
 
 def start_game(connection_socket):
     time_out = 10
     connection_socket.settimeout(time_out)
     end_game = time.time() + 10
-    connection_socket.sendall(start_game_msg().encode())
+    connection_socket.sendall(match.start_game_msg().encode())
     while time.time() < end_game:
         try:
             time_out = end_game - time.time()
@@ -70,54 +67,15 @@ def start_game(connection_socket):
             if not data:
                 # if data is not received break
                 break
-            if threading.current_thread() in group1.values():
-                with counter1_lock:
-                    global group1_result
-                    group1_result += 1
+            if threading.current_thread() in match.group1.values():
+                match.inc_g1_counter()
             else:
-                with counter2_lock:
-                    global group2_result
-                    group2_result += 1
+                match.inc_g2_counter()
         except socket.error as err:
             print(err)
             connection_socket.close()  # close the connection
             return
     connection_socket.close()  # close the connection
-
-
-def concatenate_list_data(lst):
-    result = ""
-    for element in lst:
-        result += element
-        result += "\n"
-    return result
-
-
-def start_game_msg():
-    game_message = "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n"
-    msg = game_message + concatenate_list_data(group1)
-    msg += "Group 2:\n==\n"
-    msg += concatenate_list_data(group2)
-    msg += "Start pressing keys on your keyboard as fast as you can!!\n"
-    return msg
-
-
-def print_result():
-    global group1_result
-    global group2_result
-    str1 = "Group 1 typed in " + str(group1_result) + " characters. "
-    str2 = "Group 2 typed in " + str(group2_result) + " characters."
-    print("\nGame Over!\n" + str1 + str2)
-    if group1_result > group2_result:
-        winners = concatenate_list_data(group1) + "Game over, sending out offer requests..."
-        print("\033[1;3;32mGroup 1 wins!\033[0m\n\n\u001b[36mCongratulations to the winners:\033[0m\n==\n" + winners)
-    elif group2_result > group1_result:
-        winners = concatenate_list_data(group2) + "Game over, sending out offer requests..."
-        print("\033[1;3;32mGroup 2 wins!\033[0m\n\n\u001b[36mCongratulations to the winners:\033[0m\n==\n" + winners)
-    else:
-        print("\033[0;31mDraw!\033[0m\nNone of the groups won the game!\n" + "Game over, sending out offer requests...")
-    group1_result = 0
-    group2_result = 0
 
 
 if __name__ == '__main__':
