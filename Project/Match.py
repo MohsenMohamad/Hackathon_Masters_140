@@ -51,6 +51,16 @@ class Match:
     def add_team_to_group2(self, team_name, client_thread):
         self.group2[team_name] = client_thread
 
+    def run_client_threads(self):
+        for t in self.group1.values():
+            t.start()
+        for t in self.group2.values():
+            t.start()
+
+    # may add t.join() so the server thread does not have to sleep for 10 seconds
+    # using hte join() will ensure that all the client threads has finished and closed
+    # the sockets ( we may have to change that so we can safely call print_result )
+
 
 def concatenate_list_data(lst):
     result = ""

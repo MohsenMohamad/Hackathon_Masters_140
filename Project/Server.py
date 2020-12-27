@@ -41,10 +41,7 @@ def server_broadcast(server_port, broadcast_port):
             except:
                 print(end='\r')
             time.sleep(1)
-        for t in match.group1.values():
-            t.start()
-        for t in match.group2.values():
-            t.start()
+        match.run_client_threads()
         time.sleep(10)
         match.print_result()
     #    group1.clear()
