@@ -31,8 +31,8 @@ def server_broadcast(server_port, broadcast_port):
             server.sendto(message, ('<broadcast>', broadcast_port))
             try:
                 conn, address = server_socket.accept()  # accept new connection
+                conn.setblocking(True)
                 team_name = conn.recv(1024).decode()  # add the team's name
-                conn.setblocking(False)
                 print("Connection from: " + str(address))
                 if random.choice([1, 2]) == 1:
                     client_thread = threading.Thread(target=start_game, args=(conn,))
@@ -55,10 +55,16 @@ def server_broadcast(server_port, broadcast_port):
 
 
 def start_game(connection_socket):
-    connection_socket.send(start_game_msg().encode())
-    end_game = time.time()+10
+    time_out = 10
+    connection_socket.settimeout(time_out)
+    end_game = time.time() + 10
+    connection_socket.sendall(start_game_msg().encode())
     while time.time() < end_game:
         try:
+            time_out = end_game - time.time()
+            if time_out < 0:
+                time_out = 0
+            connection_socket.settimeout(time_out)
             # receive data stream. it won't accept data packet greater than 1024 bytes
             data = connection_socket.recv(1024).decode()
             if not data:
@@ -72,8 +78,10 @@ def start_game(connection_socket):
                 with counter2_lock:
                     global group2_result
                     group2_result += 1
-        except:
-            print(end='\r')
+        except socket.error as err:
+            print(err)
+            connection_socket.close()  # close the connection
+            return
     connection_socket.close()  # close the connection
 
 
