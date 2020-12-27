@@ -30,24 +30,26 @@ def client_listen(broadcast_port):
 def client_connect(hostname, port):
 
     tcp_socket.connect((hostname, port))  # connect to the server
-    tcp_socket.send((team_name + "\n").encode())
-    with Listener(on_release=on_release) as listener:
-        client_game()
+    tcp_socket.sendall((team_name + "\n").encode())
+    client_game()
 
 
 def client_game():
-    #   the server should send a tcp packet to stop the game at the end
-    while True:
-        data = tcp_socket.recv(1024).decode()  # receive response
-        if not data:
-            break
-        print(data)  # show in terminal
-    tcp_socket.close()  # close the connection
-    print("\nServer disconnected, listening for offer requests...")
+    welcome_message = tcp_socket.recv(1024).decode()
+    print(welcome_message)
+    with Listener(on_release=on_release) as listener:
+        #   the server should send a tcp packet to stop the game at the end
+        while True:
+            data = tcp_socket.recv(1024).decode()  # receive response
+            if not data:
+                break
+            print(data)  # show in terminal
+        tcp_socket.close()  # close the connection
+        print("\nServer disconnected, listening for offer requests...")
 
 
 def on_release(key):
-    tcp_socket.send(str(key).encode())    # send message
+    tcp_socket.sendall(str(key).encode())    # send message
 
 
 if __name__ == '__main__':
