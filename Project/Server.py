@@ -4,6 +4,7 @@ import UDPMessage
 import time
 import random
 import Match
+import ClientHandler
 
 match = Match.Match()
 
@@ -31,7 +32,8 @@ def server_broadcast(server_port, broadcast_port):
                 conn, address = server_socket.accept()  # accept new connection
                 conn.setblocking(True)
                 team_name = conn.recv(1024).decode()  # add the team's name
-                client_thread = threading.Thread(target=start_game, args=(conn,))
+                handler = ClientHandler.ClientHandler(conn, match)
+                client_thread = threading.Thread(target=handler.start_game)
                 print("Connection from: " + str(address))
                 if random.choice([1, 2]) == 1:
                     match.add_team_to_group1(team_name, client_thread)
@@ -46,33 +48,6 @@ def server_broadcast(server_port, broadcast_port):
         match.print_result()
     #    group1.clear()
     #    group2.clear()
-
-
-def start_game(connection_socket):
-    time_out = 10
-    connection_socket.settimeout(time_out)
-    end_game = time.time() + 10
-    connection_socket.sendall(match.start_game_msg().encode())
-    while time.time() < end_game:
-        try:
-            time_out = end_game - time.time()
-            if time_out < 0:
-                time_out = 0
-            connection_socket.settimeout(time_out)
-            # receive data stream. it won't accept data packet greater than 1024 bytes
-            data = connection_socket.recv(1024).decode()
-            if not data:
-                # if data is not received break
-                break
-            if threading.current_thread() in match.group1.values():
-                match.inc_g1_counter()
-            else:
-                match.inc_g2_counter()
-        except socket.error as err:
-            print(err)
-            connection_socket.close()  # close the connection
-            return
-    connection_socket.close()  # close the connection
 
 
 if __name__ == '__main__':
