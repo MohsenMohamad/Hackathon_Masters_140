@@ -6,13 +6,12 @@ import struct
 
 
 tcp_socket = socket.socket()
-broadcast_port = 13117
 team_name = "Instinct"
 
 
-def client_listen():
+def client_listen(broadcast_port):
 
-    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  # UDPygyggygyygygygygygygygygygyg
+    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  # UDP
     client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     # Enable broadcasting mode
     client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -22,7 +21,6 @@ def client_listen():
         tcp_socket = socket.socket()
         data, addr = client.recvfrom(1024)
         unpacked_data = struct.unpack('QQQ', data)
-#       print(hex(unpacked_data[0]))
         host_name = addr[0]  # (eth1, 172.1.0/24) is for development , (eth2, 172.99.0/24) is to test your work
         print("Received offer from " + str(host_name) + ", attempting to connect...")
         invitation_port = unpacked_data[2]    # socket server port number
@@ -38,16 +36,14 @@ def client_connect(hostname, port):
 
 
 def client_game():
-
     #   the server should send a tcp packet to stop the game at the end
     while True:
         data = tcp_socket.recv(1024).decode()  # receive response
         if not data:
             break
-    #    print('Counter : ' + data)  # show in terminal
         print(data)  # show in terminal
     tcp_socket.close()  # close the connection
-    print("Server disconnected, listening for offer requests...")
+    print("\nServer disconnected, listening for offer requests...")
 
 
 def on_release(key):
@@ -55,8 +51,9 @@ def on_release(key):
 
 
 if __name__ == '__main__':
+    broadcastPort = 13117
     print("Client started, listening for offer requests...")
-    client_listen()
+    client_listen(broadcastPort)
 
 
 

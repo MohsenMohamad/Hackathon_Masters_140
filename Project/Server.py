@@ -4,30 +4,22 @@ import UDPMessage
 import time
 import random
 
-
-server_port = 2050  # initiate port no above 1024
-broadcast_port = 13117  # this should be the port in the end when we test it
 group1 = {}
 group2 = {}
 group1_result = 0
 group2_result = 0
-data_container = {}
 counter1_lock = threading.Lock()
 counter2_lock = threading.Lock()
-game_result = "\nGame over!\n"
 
 
-def server_broadcast():
-
+def server_broadcast(server_port, broadcast_port):
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)   # broadcast socket
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    # Enable broadcasting mode
     server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     server.settimeout(0.2)   # Set a timeout so the socket does not block indefinitely when trying to receive data.
     message = UDPMessage.send_offer(server_port)
 
-    # server accept socket
-
-    host = socket.gethostname() # get the hostname
+    host = socket.gethostname()  # get the hostname
     server_socket = socket.socket()  # get instance
     server_socket.bind((host, server_port))  # bind host address and port together
     server_socket.setblocking(False)    # set socket to non-blocking mode
@@ -52,23 +44,14 @@ def server_broadcast():
             except:
                 print(end='\r')
             time.sleep(1)
-    #    setup_teams()  # assign each team to randomly selected group
         for t in group1.values():
             t.start()
         for t in group2.values():
             t.start()
         time.sleep(10)
         print_result()
-        set_up_data(group1, group2)
         group1.clear()
         group2.clear()
-
-
-def set_up_data(group1, group2):
-    lst1 = group1.keys()
-    data_container[lst1] = group1_result
-    lst2 = group2.keys()
-    data_container[lst2] = group2_result
 
 
 def start_game(connection_socket):
@@ -91,7 +74,6 @@ def start_game(connection_socket):
                     group2_result += 1
         except:
             print(end='\r')
-    connection_socket.send(game_result.encode())
     connection_socket.close()  # close the connection
 
 
@@ -117,13 +99,13 @@ def print_result():
     global group2_result
     str1 = "Group 1 typed in " + str(group1_result) + " characters. "
     str2 = "Group 2 typed in " + str(group2_result) + " characters."
-    print(game_result + str1 + str2)
+    print("\nGame Over!\n" + str1 + str2)
     if group1_result > group2_result:
         winners = concatenate_list_data(group1) + "Game over, sending out offer requests..."
-        print("\033[1;3;32mGroup 1 wins!\033[0m\n\nCongratulations to the winners:\n==\n" + winners)
+        print("\033[1;3;32mGroup 1 wins!\033[0m\n\n\u001b[36mCongratulations to the winners:\033[0m\n==\n" + winners)
     elif group2_result > group1_result:
         winners = concatenate_list_data(group2) + "Game over, sending out offer requests..."
-        print("\033[1;3;32mGroup 2 wins!\033[0m\n\nCongratulations to the winners:\n==\n" + winners)
+        print("\033[1;3;32mGroup 2 wins!\033[0m\n\n\u001b[36mCongratulations to the winners:\033[0m\n==\n" + winners)
     else:
         print("\033[0;31mDraw!\033[0m\nNone of the groups won the game!\n" + "Game over, sending out offer requests...")
     group1_result = 0
@@ -131,5 +113,7 @@ def print_result():
 
 
 if __name__ == '__main__':
+    serverPort = 2050  # initiate port no above 1024
+    broadcastPort = 13117  # this should be the port in the end when we test it
     print("Server started,listening on IP address : " + socket.gethostbyname(socket.gethostname()))
-    server_broadcast()
+    server_broadcast(serverPort, broadcastPort)
