@@ -1,3 +1,6 @@
+from ANSI import *
+
+
 class Data:
 
     def __init__(self):
@@ -13,23 +16,22 @@ class Data:
         dct.pop(group2)
         group3 = max(dct, key=dct.get)
         dct.pop(group3)
-        print("\u001b[36mHere are top 3 groups winners, who got most winning games!\033[0m")
+        print(ANSI.CYAN + "Here are top 3 groups winners, who got most winning games!" + ANSI.END)
         print("Group1:\n==")
         self.print_teams(group1)
         print("Group2:\n==")
         self.print_teams(group1)
         print("Group3:\n==")
         self.print_teams(group1)
-        print("\033[1;3;32mCongratulations, you are the best!\033[0m\n")
+        print(ANSI.GREEN_ITALIC + "Congratulations, you are the best!" + ANSI.END + "\n")
 
     def highest_score(self):  # prints the group who has highest score in a single match.
         dct = self.statistics1
         winner = max(dct, key=dct.get)
-        print("\u001b[36mHere is the group who scored the most in one match!\033[0m\n")
-        print("Group members:\n==")
+        print(ANSI.CYAN + "Here is the players who scored the most in one match!" + ANSI.END)
         self.print_teams(winner)
 
     def print_teams(self, group_name):
         lst = self.groups[group_name]
         for item in lst:
-            print("\033[1;3;32m" + item + "\033[0m\n")
+            print(ANSI.GREEN_ITALIC + item + ANSI.END + "\n")

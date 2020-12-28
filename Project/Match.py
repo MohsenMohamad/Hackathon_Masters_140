@@ -1,5 +1,5 @@
 import threading
-
+from ANSI import *
 
 class Match:
 
@@ -28,19 +28,22 @@ class Match:
         return msg
 
     def print_result(self):
-        str1 = "\u001b[36mGroup 1 typed in " + str(self.group1_result) + " characters. "
-        str2 = "Group 2 typed in " + str(self.group2_result) + " characters.\033[0m"
-        print("\n\u001b[31mGame Over!\033[0m\n" + str1 + str2)
+        str1 = ANSI.CYAN + "Group 1 typed in " + str(self.group1_result) + " characters. "
+        str2 = "Group 2 typed in " + str(self.group2_result) + " characters." + ANSI.END
+        print("\n" + ANSI.RED + "Game Over!" + ANSI.END + "\n" + str1 + str2)
         if self.group1_result > self.group2_result:
             winners = concatenate_list_data(self.group1, 1) + "Game over, sending out offer requests..."
-            print("\033[1;3;32mGroup 1 wins!\033[0m\n\n\u001b[36mCongratulations to the winners:\n==\033[0m\n" + winners)
+            str3 = ANSI.GREEN_ITALIC + "Group 1 wins!" + ANSI.END + "\n\n"
+            str3 += ANSI.CYAN + "Congratulations to the winners:\n==" + ANSI.END + "\n" + winners
+            print(str3)
         elif self.group2_result > self.group1_result:
             winners = concatenate_list_data(self.group2, 1) + "Game over, sending out offer requests..."
-            print("\033[1;3;32mGroup 2 wins!\033[0m\n\n\u001b[36mCongratulations to the winners:\n==\033[0m\n" + winners)
+            str4 = ANSI.GREEN_ITALIC + "Group 2 wins!" + ANSI.END + "\n\n"
+            str4 += ANSI.CYAN + "Congratulations to the winners:\n==" + ANSI.END + "\n" + winners
         else:
-            print("\033[0;31mDraw!\033[0m\n\033[1;3;32mNone of the groups won the game!\033[0m\n" + "Game over, sending out offer requests...")
-    #    group1_result = 0
-    #    group2_result = 0
+            str5 = ANSI.LIGHT_RED + "Draw!" + ANSI.END + "\n" + ANSI.GREEN_ITALIC + "None of the groups won the game!"
+            str5 += ANSI.END + "\n" + "Game over, sending out offer requests..."
+            print(str5)
 
     def add_team_to_group1(self, team_name, client_thread):
         self.group1[team_name] = client_thread
@@ -69,9 +72,9 @@ def concatenate_list_data(lst, color):
     result = ""
     for element in lst:
         if color == 1:
-            result += "\033[1;3;32m"
+            result += ANSI.GREEN_ITALIC
         result += element
         if color == 1:
-            result += "\033[0m"
+            result += ANSI.END
         result += "\n"
     return result
