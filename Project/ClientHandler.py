@@ -35,3 +35,12 @@ class ClientHandler:
                 self.client_socket.close()  # close the connection
                 return
         self.client_socket.close()  # close the connection
+
+    def receive_team_name(self):
+        team_name = ""
+        while True:
+            char = self.client_socket.recv(1).decode()
+            if char == "\n" or not char:
+                break
+            team_name += char
+        return team_name

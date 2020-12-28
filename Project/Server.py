@@ -24,8 +24,8 @@ def server_broadcast(server_port, broadcast_port):
             try:
                 conn, address = server_socket.accept()  # accept new connection
                 conn.setblocking(True)
-                team_name = conn.recv(1024).decode()  # add the team's name
                 handler = ClientHandler.ClientHandler(conn, match)
+                team_name = handler.receive_team_name()  # add the team's name
                 client_thread = threading.Thread(target=handler.start_game)
                 print("Connection from: " + str(address))
                 if random.choice([1, 2]) == 1:
