@@ -25,17 +25,13 @@ class ANSIColors:
     CROSSED = "\033[9m"
     END = "\033[0m"
 
-    # cancel SGR codes if we do not write to terminal --- disable this if you work in pyCharm
-    if not __import__("sys").stdout.isatty():
-        for _ in dir():
-            if isinstance(_, str) and _[0] != "_":
-                locals()[_] = ""
-    else:
-        # set Windows console in virtual terminal
-        if __import__("platform").system() == "Windows":
-            kernel32 = __import__("ctypes").windll.kernel32
-            kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
-            del kernel32
+
+def turn_on_colors():
+    # set Windows console in virtual terminal
+    if __import__("platform").system() == "Windows":
+        kernel32 = __import__("ctypes").windll.kernel32
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+        del kernel32
 
 
 if __name__ == '__main__':

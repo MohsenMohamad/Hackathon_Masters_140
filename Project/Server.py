@@ -5,6 +5,7 @@ import time
 import random
 import Match
 import ClientHandler
+import ANSIColors
 
 match = Match.Match()
 
@@ -35,7 +36,7 @@ def server_broadcast(server_port, broadcast_port):
                 print(end='\r')
             time.sleep(1)
         match.run_client_threads()
-        time.sleep(10)
+        match.join_client_threads()
         match.print_result()
 
 
@@ -57,6 +58,7 @@ def create_server_socket(server_port):
 
 
 if __name__ == '__main__':
+    ANSIColors.turn_on_colors()
     serverPort = 2050  # initiate port no above 1024
     broadcastPort = 13117  # this should be the port in the end when we test it
     print("Server started,listening on IP address : " + socket.gethostbyname(socket.gethostname()))

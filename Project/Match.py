@@ -58,6 +58,12 @@ class Match:
     # using hte join() will ensure that all the client threads has finished and closed
     # the sockets ( we may have to change that so we can safely call print_result )
 
+    def join_client_threads(self):
+        for t in self.group1.values():
+            t.join()
+        for t in self.group2.values():
+            t.join()
+
 
 def concatenate_list_data(lst, color):
     result = ""
