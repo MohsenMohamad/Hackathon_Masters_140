@@ -1,7 +1,7 @@
 import socket
-import keyboard
 import UDPMessage
 import threading
+import KeyListen
 
 tcp_socket = socket.socket()
 team_name = "Masters\n"
@@ -69,13 +69,6 @@ def client_game(key_thread):
         return
 
 
-def on_release(key):
-    try:
-        tcp_socket.sendall(str(key).encode())    # send message
-    except socket.error as err:
-        print("Could not send the keyboard input to server : "+str(err))
-
-
 def clear_previous_invitations(client):
     client.setblocking(False)
     while True:
@@ -86,17 +79,15 @@ def clear_previous_invitations(client):
             return
 
 
-def on_key_release(key):
-    try:
-        tcp_socket.sendall(str(key).encode())  # send message
-    except socket.error as err:
-        print("Could not send the keyboard input to server : " + str(err))
-
-
 def listen():
-    keyboard.on_release(callback=on_key_release)
-    if stop_keyboard:
-        return
+    m = KeyListen.KBHit()
+    while not stop_keyboard:
+        if m.kbhit():
+            k = m.getch()
+            try:
+                tcp_socket.sendall(str(k).encode())  # send message
+            except socket.error as err:
+                print("Could not send the keyboard input to server : " + str(err))
 
 
 if __name__ == '__main__':

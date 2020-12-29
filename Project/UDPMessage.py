@@ -4,13 +4,15 @@ import struct
 def send_offer(port):
     magic_cookie = 0xfeedbeef
     message_type = 0x02
-    arr = struct.pack('QQQ', magic_cookie, message_type, port)
+    arr = struct.pack('>IBH', magic_cookie, message_type, port)
+    print(arr)
     #    print([access_bit(arr,i) for i in range(len(arr)*8)])
     return arr
 
 
 def unpack_offer(udp_packet):
-    unpacked_data = struct.unpack('QQQ', udp_packet)
+    print(udp_packet)
+    unpacked_data = struct.unpack('>IBH', udp_packet)
     return unpacked_data[2]
 
 
