@@ -25,13 +25,16 @@ def server_broadcast(server_port, broadcast_port):
                 conn, address = server_socket.accept()  # accept new connection
                 conn.setblocking(True)
                 handler = ClientHandler.ClientHandler(conn, match)
-                team_name = handler.receive_team_name()  # add the team's name
-                client_thread = threading.Thread(target=handler.start_game)
-                print("Connection from: " + str(address))
-                if random.choice([1, 2]) == 1:
-                    match.add_team_to_group1(team_name, client_thread)
+                team_name = handler.receive_team_name(stop_broadcast-time.time())  # add the team's name
+                if team_name is None:
+                    conn.close()
                 else:
-                    match.add_team_to_group2(team_name, client_thread)
+                    client_thread = threading.Thread(target=handler.start_game)
+                    print("Connection from: " + str(address))
+                    if random.choice([1, 2]) == 1:
+                        match.add_team_to_group1(team_name, client_thread)
+                    else:
+                        match.add_team_to_group2(team_name, client_thread)
             except:
                 print(end='\r')
             time.sleep(1)

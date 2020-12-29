@@ -6,7 +6,7 @@ import struct
 
 
 tcp_socket = socket.socket()
-team_name = "Instinct"
+team_name = "Instinc\nt"
 
 
 def client_listen(broadcast_port):
@@ -20,11 +20,9 @@ def client_listen(broadcast_port):
         global tcp_socket
         tcp_socket = socket.socket()
         data, addr = client.recvfrom(1024)
-        print("here")
-        unpacked_data = struct.unpack('QQQ', data)
+        invitation_port = UDPMessage.unpack_offer(data)     # socket server port number
         host_name = addr[0]  # (eth1, 172.1.0/24) is for development , (eth2, 172.99.0/24) is to test your work
         print("Received offer from " + str(host_name) + ", attempting to connect...")
-        invitation_port = unpacked_data[2]    # socket server port number
         client_connect(host_name, invitation_port)
         clear_previous_invitations(client)
         print("\nServer disconnected, listening for offer requests...")
@@ -61,7 +59,6 @@ def client_game():
                     break
                 print(data)  # show in terminal
             tcp_socket.close()  # close the connection
-            print("\nServer disconnected, listening for offer requests...")
     except socket.error as err:
         print("Error during the game : "+str(err))
         tcp_socket.close()

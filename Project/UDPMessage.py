@@ -10,6 +10,11 @@ def send_offer(port):
     return arr
 
 
+def unpack_offer(udp_packet):
+    unpacked_data = struct.unpack('QQQ', udp_packet)
+    return unpacked_data[2]
+
+
 def access_bit(data, num):
     base = int(num // 8)
     shift = int(num % 8)

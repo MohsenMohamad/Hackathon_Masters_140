@@ -36,11 +36,33 @@ class ClientHandler:
                 return
         self.client_socket.close()  # close the connection
 
-    def receive_team_name(self):
+    def receive_team_name(self, timeout):
+        start_time = time.time()
+        self.client_socket.settimeout(timeout)
         team_name = ""
         while True:
-            char = self.client_socket.recv(1).decode()
-            if char == "\n" or not char:
-                break
-            team_name += char
+            if time.time()-start_time > timeout:
+                print("Could not get the team name in time")
+                return None
+            try:
+                char = self.client_socket.recv(1).decode()
+                if not char:
+                    print("Client socket closed")   # print its ip maybe ?
+                    return None
+                if char == "\n":
+                    self.clear_socket_input_buffer()    # if the team name contains \n
+                    break
+                team_name += char
+            except socket.error as err:
+                print("Error while receiving the team name : "+str(err))
+                return None
         return team_name
+
+    def clear_socket_input_buffer(self):
+        self.client_socket.setblocking(False)
+        while True:
+            try:
+                self.client_socket.recv(1024)
+            except socket.error:
+                self.client_socket.setblocking(True)
+                break
