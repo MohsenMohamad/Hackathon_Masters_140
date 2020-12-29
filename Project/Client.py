@@ -1,9 +1,6 @@
 import socket
-from pynput.keyboard import Key, Listener
-import threading
+from pynput.keyboard import Listener
 import UDPMessage
-import struct
-
 
 tcp_socket = socket.socket()
 team_name = "Masters\n"
@@ -86,6 +83,3 @@ if __name__ == '__main__':
     broadcastPort = 13117
     print("Client started, listening for offer requests...")
     client_listen(broadcastPort)
-
-
-

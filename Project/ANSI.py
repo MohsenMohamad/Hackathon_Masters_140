@@ -4,6 +4,18 @@ class ANSI:
     LIGHT_RED = "\033[1;31m"
     LIGHT_GREEN = "\033[1;32m"
     GREEN_ITALIC = "\033[1;3;32m"
+    GREEN = "\033[0;32m"
+    BROWN = "\033[0;33m"
+    BLUE = "\033[0;34m"
+    PURPLE = "\033[0;35m"
+    LIGHT_PURPLE = "\033[1;35m"
+    BOLD = "\033[1m"
+    FAINT = "\033[2m"
+    ITALIC = "\033[3m"
+    UNDERLINE = "\033[4m"
+    BLINK = "\033[5m"
+    NEGATIVE = "\033[7m"
+    CROSSED = "\033[9m"
     END = "\033[0m"
 
 

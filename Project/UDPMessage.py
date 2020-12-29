@@ -1,5 +1,4 @@
 import struct
-import binascii
 
 
 def send_offer(port):
