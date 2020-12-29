@@ -14,7 +14,14 @@ class ClientHandler:
         time_out = 10
         self.client_socket.settimeout(time_out)
         end_game = time.time() + 10
-        self.client_socket.sendall(self.match.start_game_msg().encode())
+
+        try:
+            self.client_socket.sendall(self.match.start_game_msg().encode())
+        except socket.error as err:
+            print("Error while sending welcome message to team "+str(err))
+            self.client_socket.close()
+            return
+
         while time.time() < end_game:
             try:
                 time_out = end_game - time.time()

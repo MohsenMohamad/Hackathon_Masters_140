@@ -35,7 +35,7 @@ def server_broadcast(server_port, broadcast_port):
                         match.add_team_to_group1(team_name, client_thread)
                     else:
                         match.add_team_to_group2(team_name, client_thread)
-            except:
+            except socket.error:    # for timeout exceptions since we call accept from a non-blocking socket
                 print(end='\r')
             time.sleep(1)
         match.run_client_threads()

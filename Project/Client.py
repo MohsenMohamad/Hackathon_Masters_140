@@ -6,7 +6,7 @@ import struct
 
 
 tcp_socket = socket.socket()
-team_name = "Instinc\nt"
+team_name = "Instinct"
 
 
 def client_listen(broadcast_port):

@@ -1,6 +1,7 @@
 import threading
 from ANSI import *
 
+
 class Match:
 
     def __init__(self):
@@ -28,6 +29,11 @@ class Match:
         return msg
 
     def print_result(self):
+
+        if not self.is_valid():
+            print("no players registered for the match, sending out offer requests...")
+            return
+
         str1 = ANSI.CYAN + "Group 1 typed in " + str(self.group1_result) + " characters. "
         str2 = "Group 2 typed in " + str(self.group2_result) + " characters." + ANSI.END
         print("\n" + ANSI.RED + "Game Over!" + ANSI.END + "\n" + str1 + str2)
@@ -56,7 +62,6 @@ class Match:
             t.start()
         for t in self.group2.values():
             t.start()
-
     # may add t.join() so the server thread does not have to sleep for 10 seconds
     # using hte join() will ensure that all the client threads has finished and closed
     # the sockets ( we may have to change that so we can safely call print_result )
@@ -66,6 +71,9 @@ class Match:
             t.join()
         for t in self.group2.values():
             t.join()
+
+    def is_valid(self):
+        return self.group1 or self.group2   # return if there were players registered to this match
 
 
 def concatenate_list_data(lst, color):
