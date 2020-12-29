@@ -31,7 +31,7 @@ class Match:
     def print_result(self):
 
         if not self.is_valid():
-            print("no players registered for the match, sending out offer requests...")
+            print("No players registered for the match, sending out offer requests...")
             return
 
         str1 = ANSI.CYAN + "Group 1 typed in " + str(self.group1_result) + " characters. "
@@ -46,6 +46,7 @@ class Match:
             winners = concatenate_list_data(self.group2, 1) + "Game over, sending out offer requests..."
             str4 = ANSI.GREEN_ITALIC + "Group 2 wins!" + ANSI.END + "\n\n"
             str4 += ANSI.CYAN + "Congratulations to the winners:\n==" + ANSI.END + "\n" + winners
+            print(str4)
         else:
             str5 = ANSI.LIGHT_RED + "Draw!" + ANSI.END + "\n" + ANSI.GREEN_ITALIC + "None of the groups won the game!"
             str5 += ANSI.END + "\n" + "Game over, sending out offer requests..."

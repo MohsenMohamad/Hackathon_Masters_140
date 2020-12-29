@@ -6,7 +6,7 @@ import struct
 
 
 tcp_socket = socket.socket()
-team_name = "Instinct"
+team_name = "Masters\n"
 
 
 def client_listen(broadcast_port):
@@ -38,7 +38,7 @@ def client_connect(hostname, port):
         return
 
     try:
-        tcp_socket.sendall((team_name + "\n").encode())
+        tcp_socket.sendall(team_name.encode())
     except socket.error as err:
         print("Error at sending the team name : "+str(err))
         tcp_socket.close()
