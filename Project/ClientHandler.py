@@ -1,13 +1,16 @@
 import socket
 import time
 import threading
+import TeamStats
+import Stats
 
 
 class ClientHandler:
 
-    def __init__(self, connection_socket, match):
+    def __init__(self, connection_socket, match, team_name):
         self.client_socket = connection_socket
         self.match = match
+        self.team_name = team_name
 
     def start_game(self):
         time_out = 10
@@ -42,33 +45,4 @@ class ClientHandler:
                 return
         self.client_socket.close()  # close the connection
 
-    def receive_team_name(self, timeout):
-        start_time = time.time()
-        self.client_socket.settimeout(timeout)
-        team_name = ""
-        while True:
-            if time.time()-start_time > timeout:
-                print("Could not get the team name in time")
-                return None
-            try:
-                char = self.client_socket.recv(1).decode()
-                if not char:
-                    print("Client socket closed")   # print its ip maybe ?
-                    return None
-                if char == "\n":
-                    self.clear_socket_input_buffer()    # if the team name contains \n
-                    break
-                team_name += char
-            except socket.error as err:
-                print("Error while receiving the team name : "+str(err))
-                return None
-        return team_name
 
-    def clear_socket_input_buffer(self):
-        self.client_socket.setblocking(False)
-        while True:
-            try:
-                self.client_socket.recv(1024)
-            except socket.error:
-                self.client_socket.setblocking(True)
-                break
