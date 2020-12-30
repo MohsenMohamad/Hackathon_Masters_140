@@ -1,6 +1,7 @@
 class ANSI:
     RED = "\033[0;31m"
     CYAN = "\u001B[36m"
+    YELLOW = "\u001b[33m"
     LIGHT_RED = "\033[1;31m"
     LIGHT_GREEN = "\033[1;32m"
     GREEN_ITALIC = "\033[1;3;32m"
@@ -25,6 +26,22 @@ def turn_on_colors():
         kernel32 = __import__("ctypes").windll.kernel32
         kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
         del kernel32
+
+
+def get_cyan():  # For the server access problem
+    return ANSI.CYAN
+
+
+def get_end():   # For the server access problem
+    return ANSI.END
+
+
+def get_red():   # For the client access problem
+    return ANSI.RED
+
+
+def get_yellow():   # For the client access problem
+    return ANSI.YELLOW
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ import Match
 import ClientHandler
 import ANSI
 
+
 match = Match.Match()
 
 
@@ -30,7 +31,7 @@ def server_broadcast(server_port, broadcast_port):
                     conn.close()
                 else:
                     client_thread = threading.Thread(target=handler.start_game)
-                    print("Connection from: " + str(address))
+                    print(ANSI.get_cyan() + "Connection from: " + str(address) + ANSI.get_end())
                     if random.choice([1, 2]) == 1:
                         match.add_team_to_group1(team_name, client_thread)
                     else:

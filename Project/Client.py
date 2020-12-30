@@ -2,6 +2,7 @@ import socket
 import UDPMessage
 import threading
 import KeyListen
+import ANSI
 
 tcp_socket = socket.socket()
 team_name = "Masters\n"
@@ -21,11 +22,13 @@ def client_listen(broadcast_port):
         data, addr = client.recvfrom(1024)
         invitation_port = UDPMessage.unpack_offer(data)     # socket server port number
         host_name = addr[0]  # (eth1, 172.1.0/24) is for development , (eth2, 172.99.0/24) is to test your work
-        print("Received offer from " + str(host_name) + ", attempting to connect...")
+        msg = ANSI.get_cyan() + "Received offer from " + ANSI.get_end()+ANSI.get_yellow()+str(host_name)+ANSI.get_end()
+        msg += (ANSI.get_cyan() + ", attempting to connect..." + ANSI.get_end())
+        print(msg)
         client_connect(host_name, invitation_port)
         clear_previous_invitations(client)
         stop_keyboard = False
-        print("\nServer disconnected, listening for offer requests...")
+        print(ANSI.get_cyan() + "\nServer disconnected, listening for offer requests..." + ANSI.get_end())
 
 
 def client_connect(hostname, port):
@@ -34,13 +37,13 @@ def client_connect(hostname, port):
     try:
         tcp_socket.connect((hostname, port))  # connect to the server
     except socket.error as err:
-        print("Error while trying to connect to server : "+str(err))
+        print(ANSI.get_red() + "Error while trying to connect to server : "+str(err) + ANSI.get_end())
         return
 
     try:
         tcp_socket.sendall(team_name.encode())
     except socket.error as err:
-        print("Error at sending the team name : "+str(err))
+        print(ANSI.get_red() + "Error at sending the team name : "+str(err) + ANSI.get_red())
         tcp_socket.close()
         return
     tcp_socket.settimeout(socket.getdefaulttimeout())
@@ -53,6 +56,7 @@ def client_game(key_thread):
     global stop_keyboard
     try:
         welcome_message = tcp_socket.recv(1024).decode()
+        clear_input_buffer()
         print(welcome_message)
         key_thread.start()
         while True:
@@ -63,7 +67,7 @@ def client_game(key_thread):
         stop_keyboard = True
         tcp_socket.close()  # close the connection
     except socket.error as err:
-        print("Error during the game : "+str(err))
+        print(ANSI.get_red() + "Error during the game : "+str(err) + ANSI.get_end())
         stop_keyboard = True
         tcp_socket.close()
         return
@@ -87,10 +91,16 @@ def listen():
             try:
                 tcp_socket.sendall(str(k).encode())  # send message
             except socket.error as err:
-                print("Could not send the keyboard input to server : " + str(err))
+                print(ANSI.get_red() + "Could not send the keyboard input to server : " + str(err) + ANSI.get_end())
+
+
+def clear_input_buffer():
+    while KeyListen.KBHit().kbhit():
+        KeyListen.KBHit().getch()
 
 
 if __name__ == '__main__':
+    ANSI.turn_on_colors()
     broadcastPort = 13117
-    print("Client started, listening for offer requests...")
+    print(ANSI.get_cyan() + "Client started, listening for offer requests..." + ANSI.get_end())
     client_listen(broadcastPort)

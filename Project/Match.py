@@ -21,35 +21,38 @@ class Match:
             self.group2_result += 1
 
     def start_game_msg(self):
-        game_message = "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n"
-        msg = game_message + concatenate_list_data(self.group1, 0)
-        msg += "Group 2:\n==\n"
-        msg += concatenate_list_data(self.group2, 0)
-        msg += "Start pressing keys on your keyboard as fast as you can!!\n"
+        game_message = ANSI.CYAN + "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n" + ANSI.END
+        msg = game_message + concatenate_list_data(self.group1, 1)
+        msg += ANSI.CYAN + "Group 2:\n==\n" + ANSI.END
+        msg += concatenate_list_data(self.group2, 1)
+        msg += ANSI.CYAN + "Start pressing keys on your keyboard as fast as you can!!\n" + ANSI.END
         return msg
 
     def print_result(self):
 
         if not self.is_valid():
-            print("No players registered for the match, sending out offer requests...")
+            print(ANSI.RED + "No players registered for the match, sending out offer requests..." + ANSI.END)
             return
-
+        str0 = ANSI.BROWN + "\n====+====+====+====+====+====+====+====+====+===="
+        str0 += "\n====+====+====+====+====+====+====+====+====+====\n" + ANSI.END
         str1 = ANSI.CYAN + "Group 1 typed in " + str(self.group1_result) + " characters. "
         str2 = "Group 2 typed in " + str(self.group2_result) + " characters." + ANSI.END
         print("\n" + ANSI.RED + "Game Over!" + ANSI.END + "\n" + str1 + str2)
         if self.group1_result > self.group2_result:
-            winners = concatenate_list_data(self.group1, 1) + "Game over, sending out offer requests..."
+            winners = concatenate_list_data(self.group1, 1) + str0
+            winners += "\n" + ANSI.CYAN + "Game over, sending out offer requests..." + ANSI.END
             str3 = ANSI.GREEN_ITALIC + "Group 1 wins!" + ANSI.END + "\n\n"
             str3 += ANSI.CYAN + "Congratulations to the winners:\n==" + ANSI.END + "\n" + winners
             print(str3)
         elif self.group2_result > self.group1_result:
-            winners = concatenate_list_data(self.group2, 1) + "Game over, sending out offer requests..."
+            winners = concatenate_list_data(self.group2, 1) + str0
+            winners += "\n" + ANSI.CYAN + "Game over, sending out offer requests..." + ANSI.END
             str4 = ANSI.GREEN_ITALIC + "Group 2 wins!" + ANSI.END + "\n\n"
             str4 += ANSI.CYAN + "Congratulations to the winners:\n==" + ANSI.END + "\n" + winners
             print(str4)
         else:
             str5 = ANSI.LIGHT_RED + "Draw!" + ANSI.END + "\n" + ANSI.GREEN_ITALIC + "None of the groups won the game!"
-            str5 += ANSI.END + "\n" + "Game over, sending out offer requests..."
+            str5 += ANSI.END + "\n" + str0 + "\n" + ANSI.CYAN + "Game over, sending out offer requests..." + ANSI.END
             print(str5)
 
     def add_team_to_group1(self, team_name, client_thread):

@@ -1,6 +1,7 @@
 import socket
 import time
 import threading
+from ANSI import *
 
 
 class ClientHandler:
@@ -17,7 +18,7 @@ class ClientHandler:
         try:
             self.client_socket.sendall(self.match.start_game_msg().encode())
         except socket.error as err:
-            print("Error while sending welcome message to team "+str(err))
+            print(ANSI.RED + "Error while sending welcome message to team "+str(err) + ANSI.END)
             self.client_socket.close()
             return
 
@@ -37,7 +38,7 @@ class ClientHandler:
                 else:
                     self.match.inc_g2_counter()
             except socket.error as err:
-                print(err)
+                print(end='\r')
                 self.client_socket.close()  # close the connection
                 return
         self.client_socket.close()  # close the connection
@@ -48,19 +49,19 @@ class ClientHandler:
         team_name = ""
         while True:
             if time.time()-start_time > timeout:
-                print("Could not get the team name in time")
+                print(ANSI.RED + "Could not get the team name in time" + ANSI.END)
                 return None
             try:
                 char = self.client_socket.recv(1).decode()
                 if not char:
-                    print("Client socket closed")   # print its ip maybe ?
+                    print(ANSI.RED + "Client socket closed" + ANSI.END)   # print its ip maybe ?
                     return None
                 if char == "\n":
                     self.clear_socket_input_buffer()    # if the team name contains \n
                     break
                 team_name += char
             except socket.error as err:
-                print("Error while receiving the team name : "+str(err))
+                print(ANSI.RED + "Error while receiving the team name : "+str(err) + ANSI.END)
                 return None
         return team_name
 
