@@ -25,11 +25,11 @@ def server_broadcast(server_port, broadcast_port):
             try:
                 conn, address = server_socket.accept()  # accept new connection
                 conn.setblocking(True)
-                handler = ClientHandler.ClientHandler(conn, match)
-                team_name = handler.receive_team_name(stop_broadcast-time.time())  # add the team's name
+                team_name = receive_team_name(conn, stop_broadcast-time.time())  # add the team's name
                 if team_name is None:
                     conn.close()
                 else:
+                    handler = ClientHandler.ClientHandler(conn, team_name, match)
                     client_thread = threading.Thread(target=handler.start_game)
                     print(ANSI.get_cyan() + "Connection from: " + str(address) + ANSI.get_end())
                     if random.choice([1, 2]) == 1:
@@ -59,6 +59,39 @@ def create_server_socket(server_port):
     server_socket.setblocking(False)  # set socket to non-blocking mode
     server_socket.listen()  # configure how many client the server can listen simultaneously
     return server_socket
+
+
+def receive_team_name(client_socket, timeout):
+    start_time = time.time()
+    client_socket.settimeout(timeout)
+    team_name = ""
+    while True:
+        if time.time()-start_time > timeout:
+            print(ANSI.get_red() + "Could not get the team name in time" + ANSI.get_end())
+            return None
+        try:
+            char = client_socket.recv(1).decode()
+            if not char:
+                print(ANSI.get_red() + "Client socket closed" + ANSI.get_end())   # print its ip maybe ?
+                return None
+            if char == "\n":
+                clear_socket_input_buffer(client_socket)    # if the team name contains \n
+                break
+            team_name += char
+        except socket.error as err:
+            print(ANSI.get_red() + "Error while receiving the team name : "+str(err) + ANSI.get_end())
+            return None
+    return team_name
+
+
+def clear_socket_input_buffer(client_socket):
+    client_socket.setblocking(False)
+    while True:
+        try:
+            client_socket.recv(1024)
+        except socket.error:
+            client_socket.setblocking(True)
+            break
 
 
 if __name__ == '__main__':

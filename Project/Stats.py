@@ -1,6 +1,9 @@
 from ANSI import *
 
 
+teams_stats = {}
+
+
 class Data:
 
     def __init__(self):
