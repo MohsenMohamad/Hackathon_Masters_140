@@ -51,13 +51,12 @@ def create_broadcast_socket():
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)   # broadcast socket
     udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    # Enable broadcasting mode
     udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    udp_socket.settimeout(0.2)   # Set a timeout so the socket does not block indefinitely when trying to receive data.
     return udp_socket
 
 
 def create_server_socket(server_port):
     host = socket.gethostname()  # get the hostname
-    server_socket = socket.socket()  # get instance
+    server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  # get instance
     server_socket.bind((host, server_port))  # bind host address and port together
     server_socket.setblocking(False)  # set socket to non-blocking mode
     server_socket.listen()  # configure how many client the server can listen simultaneously
