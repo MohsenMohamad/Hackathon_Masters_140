@@ -42,6 +42,8 @@ def server_broadcast(server_port, broadcast_port):
         match.run_client_threads()
         threading.current_thread()
         match.join_client_threads()
+        if match.is_valid():
+            print(ANSI.get_cyan() + "\nGame over, sending out offer requests...\n" + ANSI.get_end())
     #    match.print_result()
 
 

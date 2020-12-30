@@ -35,26 +35,27 @@ class Match:
             print(ANSI.RED + "No players registered for the match, sending out offer requests..." + ANSI.END)
             return
         str0 = ANSI.BROWN + "\n====+====+====+====+====+====+====+====+====+===="
-        str0 += "\n====+====+====+====+====+====+====+====+====+====\n" + ANSI.END
+        str0 += "\n====+====+====+====+====+====+====+====+====+====" + ANSI.END
         str1 = ANSI.CYAN + "Group 1 typed in " + str(self.group1_result) + " characters. "
         str2 = "Group 2 typed in " + str(self.group2_result) + " characters." + ANSI.END
         end_game_message = ("\n" + ANSI.RED + "Game Over!" + ANSI.END + "\n" + str1 + str2)
         if self.group1_result > self.group2_result:
             winners = concatenate_list_data(self.group1, 1) + str0
-            winners += "\n" + ANSI.CYAN + "Game over, sending out offer requests..." + ANSI.END
+            winners += "\n"
             str3 = ANSI.GREEN_ITALIC + "Group 1 wins!" + ANSI.END + "\n\n"
             str3 += ANSI.CYAN + "Congratulations to the winners:\n==" + ANSI.END + "\n" + winners
             return end_game_message+'\n'+str3
         elif self.group2_result > self.group1_result:
             winners = concatenate_list_data(self.group2, 1) + str0
-            winners += "\n" + ANSI.CYAN + "Game over, sending out offer requests..." + ANSI.END
+            winners += "\n"
             str4 = ANSI.GREEN_ITALIC + "Group 2 wins!" + ANSI.END + "\n\n"
             str4 += ANSI.CYAN + "Congratulations to the winners:\n==" + ANSI.END + "\n" + winners
             return end_game_message+'\n'+str4
         else:
             str5 = ANSI.LIGHT_RED + "Draw!" + ANSI.END + "\n" + ANSI.GREEN_ITALIC + "None of the groups won the game!"
-            str5 += ANSI.END + "\n" + str0 + "\n" + ANSI.CYAN + "Game over, sending out offer requests..." + ANSI.END
+            str5 += ANSI.END + "\n" + str0 + "\n"
             return end_game_message+'\n'+str5
+
 
     def add_team_to_group1(self, team_name, client_thread):
         self.group1[team_name] = client_thread

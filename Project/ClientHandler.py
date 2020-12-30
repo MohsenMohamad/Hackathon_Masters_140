@@ -41,11 +41,16 @@ class ClientHandler:
                     self.match.inc_g2_counter()
             except socket.error as err:
                 result_message = self.match.print_result()
-                self.client_socket.sendall(result_message.encode())
+                try:
+                    self.client_socket.sendall(result_message.encode())
+                except socket.error:
+                    self.client_socket.close()
                 print(end='\r')
-
                 self.client_socket.close()  # close the connection
                 return
         result_message = self.match.print_result()  # in case that the player types exactly with 0 secs left
-        self.client_socket.sendall(result_message.encode())
+        try:
+            self.client_socket.sendall(result_message.encode())
+        except socket.error:
+            pass
         self.client_socket.close()  # close the connection
