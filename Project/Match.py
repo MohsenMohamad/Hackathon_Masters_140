@@ -56,7 +56,6 @@ class Match:
             str5 += ANSI.END + "\n" + str0 + "\n"
             return end_game_message+'\n'+str5
 
-
     def add_team_to_group1(self, team_name, client_thread):
         self.group1[team_name] = client_thread
 
@@ -79,7 +78,7 @@ class Match:
         return self.group1 or self.group2   # return if there were players registered to this match
 
 
-def concatenate_list_data(lst, color):
+def concatenate_list_data(lst, color):  # given a list of strings, this function concatenate them.
     result = ""
     for element in lst:
         if color == 1:

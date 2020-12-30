@@ -39,7 +39,6 @@ def client_connect(hostname, port):
     except socket.error as err:
         print(ANSI.get_red() + "Error while trying to connect to server : "+str(err) + ANSI.get_end())
         return
-
     try:
         tcp_socket.sendall(team_name.encode())
     except socket.error as err:
@@ -73,7 +72,7 @@ def client_game(key_thread):
         return
 
 
-def clear_previous_invitations(client):
+def clear_previous_invitations(client):  # cleaning the buffers out
     client.setblocking(False)
     while True:
         try:
@@ -83,13 +82,13 @@ def clear_previous_invitations(client):
             return
 
 
-def listen():
-    m = KeyListen.KBHit()
+def listen():  # Keyboard listener for the clients match
+    buffer_listener = KeyListen.KBHit()
     while not stop_keyboard:
-        if m.kbhit():
-            k = m.getch()
+        if buffer_listener.kbhit():
+            buffered_char = buffer_listener.getch()
             try:
-                tcp_socket.sendall(str(k).encode())  # send message
+                tcp_socket.sendall(str(buffered_char).encode())  # send message
             except socket.error as err:
                 print(ANSI.get_red() + "Could not send the keyboard input to server : " + str(err) + ANSI.get_end())
 

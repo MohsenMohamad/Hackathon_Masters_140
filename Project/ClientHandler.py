@@ -1,7 +1,6 @@
 import socket
 import time
 import threading
-import TeamStats
 from ANSI import *
 
 

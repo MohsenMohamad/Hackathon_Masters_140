@@ -1,3 +1,4 @@
+# Bonus 1 Impl
 class ANSI:
     RED = "\033[0;31m"
     CYAN = "\u001B[36m"
@@ -42,8 +43,3 @@ def get_red():   # For the client access problem
 
 def get_yellow():   # For the client access problem
     return ANSI.YELLOW
-
-
-if __name__ == '__main__':
-    print()     # use this to test your color combinations
-
