@@ -12,23 +12,24 @@ class Match:
         self.counter1_lock = threading.Lock()
         self.counter2_lock = threading.Lock()
 
-    def inc_g1_counter(self):
+    def inc_g1_counter(self):   # counting how many chars group1 inserted
         with self.counter1_lock:
             self.group1_result += 1
 
-    def inc_g2_counter(self):
+    def inc_g2_counter(self):   # counting how many chars group2 inserted
         with self.counter2_lock:
             self.group2_result += 1
 
     def start_game_msg(self):
-        game_message = ANSI.CYAN + "\nWelcome to Keyboard Spamming Battle Royale.\nGroup 1:\n==\n" + ANSI.END
+        game_message = ANSI.CYAN + "\nWelcome to Keyboard Spamming Battle Royale." + ANSI.END
+        game_message += (ANSI.YELLOW + "\nGroup 1:\n==\n" + ANSI.END)
         msg = game_message + concatenate_list_data(self.group1, 1)
-        msg += ANSI.CYAN + "Group 2:\n==\n" + ANSI.END
+        msg += ANSI.YELLOW + "Group 2:\n==\n" + ANSI.END
         msg += concatenate_list_data(self.group2, 1)
         msg += ANSI.CYAN + "Start pressing keys on your keyboard as fast as you can!!\n" + ANSI.END
         return msg
 
-    def print_result(self):
+    def print_result(self):   # printing the match result on the server side
 
         if not self.is_valid():
             print(ANSI.RED + "No players registered for the match, sending out offer requests..." + ANSI.END)
@@ -61,14 +62,11 @@ class Match:
     def add_team_to_group2(self, team_name, client_thread):
         self.group2[team_name] = client_thread
 
-    def run_client_threads(self):
+    def run_client_threads(self):          # running each thread to start the match
         for t in self.group1.values():
             t.start()
         for t in self.group2.values():
             t.start()
-    # may add t.join() so the server thread does not have to sleep for 10 seconds
-    # using hte join() will ensure that all the client threads has finished and closed
-    # the sockets ( we may have to change that so we can safely call print_result )
 
     def join_client_threads(self):
         for t in self.group1.values():

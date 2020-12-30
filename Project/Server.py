@@ -65,5 +65,7 @@ if __name__ == '__main__':
     ANSI.turn_on_colors()
     serverPort = 2050  # initiate port no above 1024
     broadcastPort = 13117  # this should be the port in the end when we test it
-    print("Server started,listening on IP address : " + socket.gethostbyname(socket.gethostname()))
+    msg = ANSI.get_cyan() + "Server started,listening on IP address : " + ANSI.get_end()
+    msg += (ANSI.get_yellow() + socket.gethostbyname(socket.gethostname()) + ANSI.get_end())
+    print(msg)
     server_broadcast(serverPort, broadcastPort)

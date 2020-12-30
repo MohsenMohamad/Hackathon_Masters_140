@@ -21,7 +21,7 @@ class ANSI:
 
 
 def turn_on_colors():
-    # set Windows console in virtual terminal
+    # set Windows console in virtual terminal so we can see all colors
     if __import__("platform").system() == "Windows":
         kernel32 = __import__("ctypes").windll.kernel32
         kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
