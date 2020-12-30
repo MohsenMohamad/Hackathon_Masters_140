@@ -64,24 +64,25 @@ def create_server_socket(server_port):
 def receive_team_name(client_socket, timeout):
     start_time = time.time()
     client_socket.settimeout(timeout)
-    team_name = ""
     while True:
         if time.time()-start_time > timeout:
             print(ANSI.get_red() + "Could not get the team name in time" + ANSI.get_end())
             return None
         try:
-            char = client_socket.recv(1).decode()
-            if not char:
+            team_name = str(client_socket.recv(1024), 'utf-8')
+            if not team_name:
                 print(ANSI.get_red() + "Client socket closed" + ANSI.get_end())   # print its ip maybe ?
                 return None
-            if char == "\n":
+            if team_name[len(team_name)-1] == '\n':
                 clear_socket_input_buffer(client_socket)    # if the team name contains \n
                 break
-            team_name += char
+            else:
+                client_socket.close()
+                return None
         except socket.error as err:
             print(ANSI.get_red() + "Error while receiving the team name : "+str(err) + ANSI.get_end())
             return None
-    return team_name
+    return team_name[:len(team_name)-1]
 
 
 def clear_socket_input_buffer(client_socket):
