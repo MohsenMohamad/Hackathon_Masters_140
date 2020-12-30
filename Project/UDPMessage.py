@@ -9,8 +9,15 @@ def send_offer(port):
 
 
 def unpack_offer(udp_packet):
-    unpacked_data = struct.unpack('IBH', udp_packet)
-    return unpacked_data[2]
+
+    try:
+        unpacked_data = struct.unpack('IBH', udp_packet)
+        if unpacked_data[0] == 0xfeedbeef and unpacked_data[1] == 0x2:
+            return unpacked_data[2]
+        return None
+    except struct.error as err:
+        print("Error while unpacking UDP packet : "+str(err))
+        return None
 
 
 def access_bit(data, num):
