@@ -40,8 +40,9 @@ def server_broadcast(server_port, broadcast_port):
                 print(end='\r')
             time.sleep(1)
         match.run_client_threads()
+        threading.current_thread()
         match.join_client_threads()
-        match.print_result()
+    #    match.print_result()
 
 
 def create_broadcast_socket():
