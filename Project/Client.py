@@ -16,14 +16,15 @@ def client_listen(broadcast_port):
     while True:
         data, addr = client.recvfrom(1024)
         invitation_port = UDPMessage.unpack_offer(data)     # socket server port number
-        if invitation_port is not None:
-            host_name = addr[0]  # (eth1, 172.1.0/24) is for development , (eth2, 172.99.0/24) is to test your work
-            msg = ANSI.get_cyan() + "Received offer from " + ANSI.get_end()+ANSI.get_yellow()+str(host_name)+ANSI.get_end()
-            msg += (ANSI.get_cyan() + ", attempting to connect..." + ANSI.get_end())
-            print(msg)
-            client_connect(host_name, invitation_port)
-            clear_previous_invitations(client)
-            print(ANSI.get_cyan() + "\nServer disconnected, listening for offer requests..." + ANSI.get_end())
+        if invitation_port is None:
+            continue
+        host_name = addr[0]  # (eth1, 172.1.0/24) is for development , (eth2, 172.99.0/24) is to test your work
+        msg = ANSI.get_cyan() + "Received offer from " + ANSI.get_end()+ANSI.get_yellow()+str(host_name)+ANSI.get_end()
+        msg += (ANSI.get_cyan() + ", attempting to connect..." + ANSI.get_end())
+        print(msg)
+        client_connect(host_name, invitation_port)
+        clear_previous_invitations(client)
+        print(ANSI.get_cyan() + "\nServer disconnected, listening for offer requests..." + ANSI.get_end())
 
 
 def client_connect(hostname, port):

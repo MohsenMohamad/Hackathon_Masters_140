@@ -34,6 +34,7 @@ class Match:
         msg += concatenate_list_data(self.group2, 1)
         msg += ANSI.CYAN + "Start pressing keys on your keyboard as fast as you can!!\n" + ANSI.END
         return msg
+
     # After changing the instructions so the server now sends the result to all clients instead of printing them out.
     # We got 3 cases, 1. group 1 won, 2. group 2 won, 3. draw and none of them one.
     def print_result(self):
@@ -80,7 +81,7 @@ class Match:
         for t in self.group2.values():
             t.join()
 
-    def is_valid(self): # checking if any of the groups not empty
+    def is_valid(self):     # checking if any of the groups not empty
         return self.group1 or self.group2   # return if there were players registered to this match
 
 

@@ -4,6 +4,8 @@ from ANSI import *
 teams_stats = {}
 
 # Bonus 2 Impl
+
+
 class Data:
 
     def __init__(self):

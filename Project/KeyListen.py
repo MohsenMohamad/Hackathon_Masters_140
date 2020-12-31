@@ -1,3 +1,22 @@
+# since the keyboard package in linux requires root permissions to work and we do not have them while in remote
+# control and since pynput did not work remotely either because of the remote display port we decided to use this
+# keyboard listener implementation  , credits to :
+# : https://github.com/gbarbon/python-asip/blob/master/python_asip_client/kbhit.py
+
+'''
+A Python class implementing KBHIT, the standard keyboard-interrupt poller.
+Works transparently on Windows and Posix (Linux, Mac OS X).  Doesn't work
+with IDLE.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+'''
+
 import os
 
 # Windows
@@ -81,6 +100,7 @@ class KBHit:
 
         return vals.index(ord(c.decode('utf-8')))
 
+
     def kbhit(self):
         ''' Returns True if keyboard character was hit, False otherwise.
         '''
@@ -90,5 +110,3 @@ class KBHit:
         else:
             dr,dw,de = select([sys.stdin], [], [], 0)
             return dr != []
-
-

@@ -38,7 +38,7 @@ class ClientHandler:
                     self.match.inc_g1_counter()
                 else:
                     self.match.inc_g2_counter()
-            except socket.error as err:
+            except socket.error:
                 result_message = self.match.print_result()
                 try:
                     self.client_socket.sendall(result_message.encode())
