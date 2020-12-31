@@ -6,6 +6,9 @@ import random
 import Match
 import ClientHandler
 import ANSI
+# Constant variables
+BUFF_SIZE = 1024
+MAX_TIMEOUT = 10
 
 
 def server_broadcast(server_port, broadcast_port):
@@ -15,7 +18,7 @@ def server_broadcast(server_port, broadcast_port):
 
     while True:
         match = Match.Match()
-        stop_broadcast = time.time() + 10
+        stop_broadcast = time.time() + MAX_TIMEOUT
         while time.time() < stop_broadcast:
             broadcast_socket.sendto(message, ('<broadcast>', broadcast_port))
             try:
@@ -66,7 +69,7 @@ def receive_team_name(client_socket, timeout):
             print(ANSI.get_red() + "Could not get the team name in time" + ANSI.get_end())
             return None
         try:
-            team_name = str(client_socket.recv(1024), 'utf-8')
+            team_name = str(client_socket.recv(BUFF_SIZE), 'utf-8')
             if not team_name:
                 print(ANSI.get_red() + "Client socket closed" + ANSI.get_end())   # print its ip maybe ?
                 return None
@@ -86,7 +89,7 @@ def clear_socket_input_buffer(client_socket):
     client_socket.setblocking(False)
     while True:
         try:
-            client_socket.recv(1024)
+            client_socket.recv(BUFF_SIZE)
         except socket.error:
             client_socket.setblocking(True)
             break

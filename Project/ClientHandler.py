@@ -2,6 +2,9 @@ import socket
 import time
 import threading
 from ANSI import *
+# Constant variables
+BUFF_SIZE = 1024
+MAX_TIMEOUT = 10
 
 
 class ClientHandler:
@@ -12,9 +15,9 @@ class ClientHandler:
         self.match = match
 
     def start_game(self):
-        time_out = 10
+        time_out = MAX_TIMEOUT
         self.client_socket.settimeout(time_out)
-        end_game = time.time() + 10
+        end_game = time.time() + MAX_TIMEOUT
 
         try:
             self.client_socket.sendall(self.match.start_game_msg().encode())
@@ -30,7 +33,7 @@ class ClientHandler:
                     time_out = 0
                 self.client_socket.settimeout(time_out)
                 # receive data stream. it won't accept data packet greater than 1024 bytes
-                data = self.client_socket.recv(1024).decode()
+                data = self.client_socket.recv(BUFF_SIZE).decode()
                 if not data:
                     # if data is not received break
                     break

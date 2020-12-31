@@ -1,9 +1,6 @@
 from ANSI import *
-
-
-teams_stats = {}
-
 # Bonus 2 Impl
+teams_stats = {}
 
 
 class Data:

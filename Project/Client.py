@@ -3,8 +3,10 @@ import UDPMessage
 import threading
 import KeyListen
 import ANSI
-
-team_name = "Masters\n"
+# Constant variables
+TEAM_NAME = "Masters\n"
+BUFF_SIZE = 1024
+MAX_TIMEOUT = 10
 
 
 def client_listen(broadcast_port):
@@ -14,7 +16,7 @@ def client_listen(broadcast_port):
     client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     client.bind(("", broadcast_port))
     while True:
-        data, addr = client.recvfrom(1024)
+        data, addr = client.recvfrom(BUFF_SIZE)
         invitation_port = UDPMessage.unpack_offer(data)     # socket server port number
         if invitation_port is None:
             continue
@@ -30,14 +32,14 @@ def client_listen(broadcast_port):
 def client_connect(hostname, port):
 
     tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_socket.settimeout(10)
+    tcp_socket.settimeout(MAX_TIMEOUT)
     try:
         tcp_socket.connect((hostname, port))  # connect to the server
     except socket.error as err:
         print(ANSI.get_red() + "Error while trying to connect to server : "+str(err) + ANSI.get_end())
         return
     try:
-        tcp_socket.sendall(team_name.encode())
+        tcp_socket.sendall(TEAM_NAME.encode())
     except socket.error as err:
         print(ANSI.get_red() + "Error at sending the team name : "+str(err) + ANSI.get_red())
         tcp_socket.close()
@@ -50,12 +52,12 @@ def client_game(conn_socket):
     stop_keyboard_event = threading.Event()
     keyboard_thread = threading.Thread(target=listen, args=(conn_socket, stop_keyboard_event,))
     try:
-        welcome_message = conn_socket.recv(1024).decode()
+        welcome_message = conn_socket.recv(BUFF_SIZE).decode()
         clear_input_buffer()
         print(welcome_message)
         keyboard_thread.start()
         while True:
-            data = conn_socket.recv(1024).decode()  # receive response
+            data = conn_socket.recv(BUFF_SIZE).decode()  # receive response
             if not data:
                 break
             print(data)  # show in terminal
@@ -72,7 +74,7 @@ def clear_previous_invitations(client):  # cleaning the buffers out
     client.setblocking(False)
     while True:
         try:
-            client.recv(1024)
+            client.recv(BUFF_SIZE)
         except socket.error:
             client.setblocking(True)
             return
