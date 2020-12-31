@@ -8,11 +8,7 @@ import ClientHandler
 import ANSI
 
 
-match = Match.Match()
-
-
 def server_broadcast(server_port, broadcast_port):
-    global match
     broadcast_socket = create_broadcast_socket()
     message = UDPMessage.send_offer(server_port)
     server_socket = create_server_socket(server_port)
@@ -55,8 +51,7 @@ def create_broadcast_socket():
 
 
 def create_server_socket(server_port):
-    host = socket.gethostname()  # get the hostname
-    server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  # get instance
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # get instance
     server_socket.bind(('0.0.0.0', server_port))  # bind host address and port together
     server_socket.setblocking(False)  # set socket to non-blocking mode
     server_socket.listen()  # configure how many client the server can listen simultaneously
