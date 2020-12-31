@@ -1,6 +1,12 @@
 import threading
 from ANSI import *
 
+'''
+Here we implemented the game rules and the data/result sent from server to client 
+at each match. We got two threads, one for group1 and another for group2 counting 
+how many chars received from each group in every match.
+'''
+
 
 class Match:
 
@@ -20,7 +26,7 @@ class Match:
         with self.counter2_lock:
             self.group2_result += 1
 
-    def start_game_msg(self):
+    def start_game_msg(self):  # The start message which will be sent right before starting the match.
         game_message = ANSI.CYAN + "\nWelcome to Keyboard Spamming Battle Royale." + ANSI.END
         game_message += (ANSI.YELLOW + "\nGroup 1:\n==\n" + ANSI.END)
         msg = game_message + concatenate_list_data(self.group1, 1)
@@ -28,9 +34,9 @@ class Match:
         msg += concatenate_list_data(self.group2, 1)
         msg += ANSI.CYAN + "Start pressing keys on your keyboard as fast as you can!!\n" + ANSI.END
         return msg
-
-    def print_result(self):   # printing the match result on the server side
-
+    # After changing the instructions so the server now sends the result to all clients instead of printing them out.
+    # We got 3 cases, 1. group 1 won, 2. group 2 won, 3. draw and none of them one.
+    def print_result(self):
         if not self.is_valid():
             print(ANSI.RED + "No players registered for the match, sending out offer requests..." + ANSI.END)
             return
@@ -74,7 +80,7 @@ class Match:
         for t in self.group2.values():
             t.join()
 
-    def is_valid(self):
+    def is_valid(self): # checking if any of the groups not empty
         return self.group1 or self.group2   # return if there were players registered to this match
 
 
